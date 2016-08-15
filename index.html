@@ -1,0 +1,261 @@
+<html>
+<head>
+    <title>Test Web Api Request</title>
+    <style>
+        #register, #login, #logout,#deleteCustomer,#createCustomer, #updateCustomer, 
+        #deleteCustomer, #multileDeleteCustomer, #batchDelete, #createEmployees, 
+        #createAgents, #computeSalary{
+            cursor:pointer;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div id="container"></div>
+        <div id="register">Register</div>
+        <div id="login">Login</div>
+        <div id="logout">Logout</div>
+        <hr/>
+       
+        <div id="createCustomer">Create Customer</div>
+        <div id="updateCustomer">Update Customer</div>
+        <div id="deleteCustomer">Delete Customer</div>
+        <div id="multileDeleteCustomer">Multiple Delete Customer</div>
+        <div id="batchDelete">Batch Delete</div>
+
+        <hr/>
+
+        <div id="createEmployees">Create Employees</div>
+
+        <hr/>
+
+        <div id="createAgents">Create Agents</div>
+
+
+        <hr/>
+
+        <div id="computeSalary">Compute Salary</div>
+        
+    </div>    
+    <script src="/node_modules/jquery/dist/jquery.js"></script>
+    <script>
+        $( document ).ready(function() {
+            
+            var tokenKey = 'accessToken';
+
+            var url = "http://127.0.0.1:8090";  
+            
+            callApi();
+            function callApi(){
+              
+              var token = sessionStorage.getItem(tokenKey);
+              var headers = {};
+              if(token){
+                 
+                  headers.Authorization = 'Bearer ' + token;
+              }
+
+               console.log(headers);
+
+               $.ajax({
+                   type: 'GET',
+                   url: url + '/api/values',
+                   headers: headers
+               }).done(function(data){
+                   console.log(data);
+               });
+
+               $.ajax({
+                   type: 'GET',
+                   url: url + '/api/users',                   
+               }).done(function(data){
+                   console.log(data);
+               });
+
+          
+
+
+            } 
+
+            $('#register').click(function(){
+                
+                var data = {
+                    Email: 'juliusbacosa13@live.com',
+                    Password: 'P@ssw0rd',
+                    ConfirmPassword: 'P@ssw0rd'
+                };        
+                
+                $.ajax({
+                    type: 'POST',
+                    url: url + '/api/Account/Register',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(data)
+                }).done(function (data) {
+                    $('#container').html(data);
+                }).fail();
+            });
+
+            $('#login').click(function(){
+                var loginData = {
+                    grant_type: 'password',
+                    username: 'juliusbacosa13@live.com',
+                    password: 'P@ssw0rd'
+                };
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: url + '/Token',
+                    data: loginData,          
+                }).done(function (data) {
+                    console.log(data);
+                    // Cache the access token in session storage.
+                    sessionStorage.setItem(tokenKey, data.access_token);
+                }).fail();
+            });
+
+            $('#logout').click(function(){
+                 sessionStorage.removeItem(tokenKey);
+            });
+
+            // $('#deleteCustomer').click(function(){
+                
+            //     var id = 2;
+            //     $.ajax({
+            //         type: 'Delete',
+            //         url: url + '/api/Customers/' + id,                          
+            //     }).done(function (data) {
+                   
+            //     }).fail();
+            // });
+
+             $('#createCustomer').click(function(){
+                var createData = {                    
+                    FirstName: 'Julius',
+                    MiddleName: 'Cabatana',
+                    LastName: 'Bacosa',
+                    Email: 'juliusbacosa@gmail.com'
+                };
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: url + '/api/customers',
+                    data: createData,          
+                }).done(function (data) {
+                    console.log(data);                   
+                }).fail();
+            });
+
+             $('#createEmployees').click(function(){
+                var createData = {                    
+                    FirstName: 'Julius',
+                    MiddleName: 'Cabatana',
+                    LastName: 'Bacosa',
+                    Email: 'juliusbacosa@gmail.com'
+                };
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: url + '/api/employees',
+                    data: createData,          
+                }).done(function (data) {
+                    console.log(data);                   
+                }).fail();
+            });
+
+            $('#createAgents').click(function(){
+                var createData = {                    
+                    FirstName: 'Julius',
+                    MiddleName: 'Cabatana',
+                    LastName: 'Bacosa',
+                    Email: 'juliusbacosa@gmail.com'
+                };
+
+
+                $.ajax({
+                    type: 'POST',
+                    url: url + '/api/agents',
+                    data: createData,          
+                }).done(function (data) {
+                    console.log(data);                   
+                }).fail();
+            });
+
+            
+
+
+             $('#updateCustomer').click(function(){
+                var createData = { 
+                    FirstName: 'Juliusx',
+                    MiddleName: 'Cabatanax',
+                    LastName: 'Bacosax',
+                    Email: 'juliusbacosax@gmail.com'
+                };
+
+                var id = 5
+                $.ajax({
+                    type: 'PUT',
+                    url: url + '/api/customers/' + id,
+                    data: createData,          
+                }).done(function (data) {
+                    console.log(data);                   
+                }).fail();
+            });
+
+             $('#deleteCustomer').click(function(){               
+                var id = 12;
+                $.ajax({
+                    type: 'Delete',
+                    url: url + '/api/customers/' + id,                          
+                }).done(function (data) {
+                    console.log(data); 
+                }).fail();
+            });
+
+             $('#multileDeleteCustomer').click(function(){               
+                var ids = [14,15];
+                $.ajax({
+                    type: 'Delete',
+                    url: url + '/api/customers/' + 18, 
+                   data:{
+                       ids: ids
+                   }                     
+                }).done(function (data) {
+                    console.log(data); 
+                }).fail();
+            });
+
+            $('#batchDelete').click(function(){
+                var data = [3,4];
+                $.ajax({
+                    type: 'Delete',
+                    url: url + '/api/customers/',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(data)                                  
+                }).done(function (data) {
+                    console.log(data); 
+                }).fail();
+            });
+
+            $('#computeSalary').click(function(){
+                var data = [2,5,7,8];
+                $.ajax({
+                    type: 'POST',
+                    url: url + '/api/payroll/',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(data)                                  
+                }).done(function (data) {
+                    console.log(data); 
+                }).fail();
+            });
+
+            
+
+
+        });
+
+    </script>
+</body>            
+</html>    
